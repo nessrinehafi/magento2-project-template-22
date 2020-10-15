@@ -1,9 +1,7 @@
 node {
     // Clean workspace before doing anything
     deleteDir()
-   
-
-    try {
+  
         
         stage ('Clone') {
             checkout scm
@@ -25,5 +23,5 @@ node {
             sh "bin/dep build -vvv"
         }
         
-}
+
 }

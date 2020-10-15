@@ -1,23 +1,10 @@
 node {
     // Clean workspace before doing anything
     deleteDir()
-    
-    def hostStage
-    def deployStatus
+   
 
     try {
-        stage ('Preparations') {
-            if ( ${env.BRANCH_NAME} == 'develop') {
-                hostStage = 'dev'
-            }
-            if (${env.BRANCH_NAME} == 'stage') {
-                hostStage = 'stage'
-            }
-            if (${env.BRANCH_NAME} == 'master') {
-                hostStage = 'prod'
-            }
-            echo "Deploy to: ${hostStage}"
-        }
+        
         stage ('Clone') {
             checkout scm
         }
@@ -37,27 +24,5 @@ node {
         stage ('Build') {
             sh "bin/dep build -vvv"
         }
-        if (hostStage) {
-            stage ("Deploy ${hostStage}") {
-                deployStatus = 'start'
-                sh "bin/dep deploy-artifact ${hostStage} -vvv"
-                deployStatus = 'finish'
-            }
-        } else {
-            stage ("Deploy Skipped") {
-                echo "Branch not valid for deployment: ${BRANCH_NAME}"
-            }
-        }
-      	stage ('Clean Up') {
-            deleteDir()
-        }
-    } catch (err) {
-        if (deployStatus == 'start') {
-            stage ('Deploy Unlock') {
-                sh "bin/dep deploy:unlock ${hostStage} -vvv"
-            }
-        }
-        currentBuild.result = 'FAILED'
-        throw err
-    }
+        
 }

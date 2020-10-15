@@ -7,13 +7,13 @@ node {
 
     try {
         stage ('Preparations') {
-            if ($BRANCH_NAME == 'develop') {
+            if ( ${env.BRANCH_NAME} == 'develop') {
                 hostStage = 'dev'
             }
-            if ($BRANCH_NAME == 'stage') {
+            if (${env.BRANCH_NAME} == 'stage') {
                 hostStage = 'stage'
             }
-            if ($BRANCH_NAME == 'master') {
+            if (${env.BRANCH_NAME} == 'master') {
                 hostStage = 'prod'
             }
             echo "Deploy to: ${hostStage}"
